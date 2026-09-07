@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f597f25265683114aac541e4af0f5c7d, type: 3}
+  m_Name: ProjectilesConfiguration
+  m_EditorClassIdentifier: Assembly-CSharp::Ships.Weapons.ProjectilesConfiguration
+  projectilesPrefabs:
+  - {fileID: 7901383683764708689, guid: 38224378e2b084247afb299405d39150, type: 3}
+  - {fileID: 6195231843729399110, guid: 6eaee74d8ad587a45aff0ba478d14d21, type: 3}
