@@ -12,9 +12,9 @@ namespace Ships.Common
         public readonly ProjectileId defaultProjectileId;
         public readonly Teams Team;
         public readonly int score;
+        public readonly CheckDestroyLimits.CheckDestroyLimits checkDestroyLimits;
 
-
-        public ShipConfiguration(Input.Input input, CheckLimits.CheckLimits checkLimits, Vector2 speed, float fireRate, int health, ProjectileId defaultProjectileId, Teams team, int score)
+        public ShipConfiguration(Input.Input input, CheckLimits.CheckLimits checkLimits, Vector2 speed, float fireRate, int health, ProjectileId defaultProjectileId, Teams team, int score, CheckDestroyLimits.CheckDestroyLimits checkDestroyLimits)
         {
             this.input = input;
             this.checkLimits = checkLimits;
@@ -24,6 +24,7 @@ namespace Ships.Common
             this.defaultProjectileId = defaultProjectileId;
             this.Team = team;
             this.score = score;
+            this.checkDestroyLimits = checkDestroyLimits;
         }
     }
 

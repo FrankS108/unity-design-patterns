@@ -1,6 +1,7 @@
 
 using Input;
 using NUnit.Framework;
+using Ships.CheckDestroyLimits;
 using Ships.CheckLimits;
 using Ships.Enemies;
 using UnityEngine;
@@ -21,6 +22,13 @@ namespace Ships.Common
             InitialPosition,
             Viewport
         }
+
+        public enum CheckDestroyLimitsTypes
+        {
+            DoNotCheckDestroyLimitsStrategy,
+            CheckBottomLimitsStrategy
+        }
+
         private ShipMediator prefab;
         private Vector3 position;
         private Quaternion rotation = Quaternion.identity;
@@ -32,10 +40,17 @@ namespace Ships.Common
         private JoyButton joyButton;
         private CheckLimitTypes checkLimitType;
         private Teams team;
+        private CheckDestroyLimits.CheckDestroyLimits checkDestroyLimits = new DoNotCheckDestroyLimitsStrategy();
 
         public ShipBuilder FromPrefab(ShipMediator prefab)
         {
             this.prefab = prefab;
+            return this;
+        }
+
+        public ShipBuilder WithCheckBottomDestroyLimits()
+        {
+            checkDestroyLimits = new CheckBottomLimitsStrategy(Camera.main);
             return this;
         }
 
@@ -145,7 +160,8 @@ namespace Ships.Common
                 this.shipConfiguration.Health,
                 this.shipConfiguration.DefaultProjectileId,
                 team,
-                this.shipConfiguration.Score
+                this.shipConfiguration.Score,
+                checkDestroyLimits
             );
 
             ship.Configure(shipConfiguration);

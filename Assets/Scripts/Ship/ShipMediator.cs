@@ -1,21 +1,22 @@
 using UnityEngine;
 using Ships.Weapons;
 using Ships.Movement;
-using Ships.Weapons.Projectiles;
 using Ships.Common;
 using UI;
-using UnityEngine.SocialPlatforms.Impl;
+using Common;
 
 namespace Ships
 {
-    public class ShipMediator : MonoBehaviour, Ship
+    public class ShipMediator : MonoBehaviour, Ship, EventObserver
     {
         [SerializeField] private MovementController movementController;
         [SerializeField] private WeaponController weaponController;
         [SerializeField] private HealthController healthController;
-        private Input.Input input;
-
         [SerializeField] public ShipId shipId;
+
+
+        private CheckDestroyLimits.CheckDestroyLimits checkDestroyLimits;
+        private Input.Input input;
         private Teams team;
         private int score;
 
@@ -23,12 +24,25 @@ namespace Ships
 
         public void Configure(ShipConfiguration shipConfiguration)
         {
-            this.input = shipConfiguration.input;
+            checkDestroyLimits = shipConfiguration.checkDestroyLimits;
+            input = shipConfiguration.input;
             movementController.Configure(this, shipConfiguration.checkLimits, shipConfiguration.speed);
             weaponController.Configure(this, shipConfiguration.fireRate, shipConfiguration.defaultProjectileId, shipConfiguration.Team);
             healthController.Configure(this, shipConfiguration.health, shipConfiguration.Team);
             team = shipConfiguration.Team;
             score = shipConfiguration.score;
+        }
+
+        private void Start()
+        {
+            EventQueue.Instance.Subscribe(EventIds.GameOver, this);
+            EventQueue.Instance.Subscribe(EventIds.Victory, this);
+        }
+
+        private void OnDestroy()
+        {
+            EventQueue.Instance.Unsubscribe(EventIds.GameOver, this);
+            EventQueue.Instance.Unsubscribe(EventIds.Victory, this);
         }
 
         private void FixedUpdate()
@@ -40,6 +54,19 @@ namespace Ships
         void Update()
         {
             TryShoot();
+            CheckDestroyLimits();
+        }
+
+        private void CheckDestroyLimits()
+        {
+            if (checkDestroyLimits.isInsideTheLimits(transform.position))
+            {
+                return;
+            }
+
+            Destroy(gameObject);
+            var shipDestroyedEventData = new ShipDestroyedEventData(0, team, GetEntityId().GetHashCode());
+            EventQueue.Instance.EnqueueEvent(shipDestroyedEventData);
         }
 
         private void TryShoot()
@@ -64,15 +91,20 @@ namespace Ships
         {
             if (isDeath)
             {
-                ScoreView.Instance.AddScore(team, score);
                 Destroy(gameObject);
-                if (team == Teams.Ally)
-                {
-                    GameOverView.Instance.Show();
-                }
+                var shipDestroyedEventData = new ShipDestroyedEventData(score, team, GetEntityId().GetHashCode());
+                EventQueue.Instance.EnqueueEvent(shipDestroyedEventData);
             }
         }
 
+        public void Process(EventData eventData)
+        {
+            if (
+                eventData.EventId != EventIds.GameOver &&
+                eventData.EventId != EventIds.Victory
+            ) return;
+            Destroy(gameObject);
+        }
     }
 
 }

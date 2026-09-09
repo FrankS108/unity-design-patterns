@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using Input;
-using NUnit.Framework.Constraints;
-using Ships.CheckLimits;
+using Common;
 using Ships.Common;
 using UnityEngine;
 
@@ -17,11 +13,9 @@ namespace Ships.Enemies
         private float currentTimeInSeconds;
         private int currentConfigurationIndex;
         private bool canSpawn;
-        private List<ShipMediator> spawnedShips;
 
         private void Awake()
         {
-            spawnedShips = new List<ShipMediator>();
             shipFactory = new ShipFactory(Instantiate(shipsConfiguration));
         }
 
@@ -35,14 +29,6 @@ namespace Ships.Enemies
             canSpawn = false;
             currentTimeInSeconds = 0;
             currentConfigurationIndex = 0;
-            if (spawnedShips.Count > 0)
-            {
-                foreach (var shipMediator in spawnedShips)
-                {
-                    Destroy(shipMediator.gameObject);
-                }
-            }
-            spawnedShips.Clear();
         }
 
         private void Update()
@@ -64,6 +50,11 @@ namespace Ships.Enemies
 
             SpawnShips(spawnConfiguration);
             currentConfigurationIndex += 1;
+
+            if (currentConfigurationIndex >= levelConfiguration.SpawnConfigurations.Length)
+            {
+                EventQueue.Instance.EnqueueEvent(new EventData(EventIds.AllShipSpawned));
+            }
         }
 
         private void SpawnShips(SpawnConfiguration spawnConfiguration)
@@ -84,10 +75,11 @@ namespace Ships.Enemies
                     .WithPosition(spawnPosition.position)
                     .WithRotation(spawnPosition.rotation)
                     .WithTeam(Teams.Enemy)
+                    .WithCheckBottomDestroyLimits()
                     .Build();
-                spawnedShips.Add(ship);
+
+                EventQueue.Instance.EnqueueEvent(new EventData(EventIds.ShipSpawned));
             }
         }
-
     }
 }

@@ -7,13 +7,14 @@ namespace Battle
 {
     public class GameFacade : MonoBehaviour
     {
-
         [SerializeField] private UI.ScreenFade screenFade;
         [SerializeField] private ShipInstaller shipInstaller;
         [SerializeField] private EnemySpawner enemySpawner;
+        [SerializeField] private GameStateController gameState;
 
         public void StartBattle()
         {
+            gameState.Reset();
             ScoreView.Instance.Reset();
             enemySpawner.StartSpawn();
             shipInstaller.SpawnUserShip();
@@ -23,7 +24,6 @@ namespace Battle
         public void StopBattle()
         {
             enemySpawner.StopAndReset();
-            shipInstaller.DestroyUserShip();
             screenFade.Show();
         }
     }

@@ -17,7 +17,6 @@ namespace Ships
         [SerializeField] private ShipToSpawnConfiguration shipConfiguration;
         [SerializeField] private ShipsConfiguration shipsConfiguration;
         private ShipBuilder shipBuilder;
-        private ShipMediator userShip;
 
         void Awake()
         {
@@ -34,12 +33,7 @@ namespace Ships
 
         public void SpawnUserShip()
         {
-            userShip = shipBuilder.Build();
-        }
-
-        internal void DestroyUserShip()
-        {
-            Destroy(userShip.gameObject);
+            shipBuilder.Build();
         }
 
         private void SetCheckLimitsStrategy(ShipBuilder shipBuilder)

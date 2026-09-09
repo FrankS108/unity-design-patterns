@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Patterns.Decoupling.EventQueueWithObserver
+namespace Common
 {
     public class EventQueue : MonoBehaviour
     {
